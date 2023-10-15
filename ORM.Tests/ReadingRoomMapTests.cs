@@ -57,7 +57,9 @@ namespace ORM.Tests
                     return false;
                 }
 
+#pragma warning disable SA1305 // Field names should not use Hungarian notation
                 return x is ReadingRoom xReadingRoom && y is ReadingRoom yReadingRoom ? xReadingRoom.Name == yReadingRoom.Name : x.Equals(y);
+#pragma warning restore SA1305 // Field names should not use Hungarian notation
             }
 
             /// <summary>

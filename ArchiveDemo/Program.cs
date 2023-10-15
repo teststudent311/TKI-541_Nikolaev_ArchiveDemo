@@ -43,20 +43,6 @@ namespace ArchiveDemo
 
             var foundDocument = docRepo.Find(x => x.Title == "Название 1");
             Console.WriteLine(foundDocument);
-
-            document.ChangeTitle("Новое название");
-            session.Flush();
-
-            // Поиск и вывод обновленного документа
-            var updatedDocument = docRepo.Find(x => x.Title == "Новое название");
-            Console.WriteLine(updatedDocument);
-
-            docRepo.Delete(updatedDocument);
-            session.Flush();
-
-            // Попытка поиска и вывод удаленного документа (должно вернуть null или не найти документ)
-            var deletedDocument = docRepo.Find(x => x.Title == "Новое название");
-            Console.WriteLine(deletedDocument != null ? deletedDocument.ToString() : "Документ удален");
         }
     }
 }
