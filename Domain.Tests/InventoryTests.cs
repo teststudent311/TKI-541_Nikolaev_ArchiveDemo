@@ -1,5 +1,5 @@
 ﻿// <copyright file="InventoryTests.cs" company="Николаев А.М.">
-// Copyright (c) Николаев А.М.. All rights reserved.
+// Copyright (Николаев А.М.. All rights reserved.
 // </copyright>
 
 namespace Domain.Tests
@@ -56,32 +56,32 @@ namespace Domain.Tests
         }
 
         /// <summary>
-        /// Тестирование метода <see cref="Inventory.ChangeTitle"/> на корректность изменения названия описи.
+        /// Тестирование метода <see cref="Inventory.SetName"/> на корректность изменения названия описи.
         /// </summary>
         [Test]
-        public void ChangeTitle_ValidData_Success()
+        public void SetName_ValidData_Success()
         {
             // Arrange
             var inventory = new Inventory(1001, "Опись 1");
 
             // Act
-            inventory.ChangeTitle("Опись 2");
+            inventory.SetName("Опись 2");
 
             // Assert
             Assert.That(inventory.ToString(), Does.Contain("Опись 2"));
         }
 
         /// <summary>
-        /// Тестирование метода <see cref="Inventory.ChangeTitle"/> на выброс исключения при передаче пустого значения.
+        /// Тестирование метода <see cref="Inventory.SetName"/> на выброс исключения при передаче пустого значения.
         /// </summary>
         [Test]
-        public void ChangeTitle_EmptyTitle_Fail()
+        public void SetName_EmptyTitle_Fail()
         {
             // Arrange
             var inventory = GetInventory("Опись 1");
 
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => inventory.ChangeTitle(string.Empty));
+            Assert.Throws<ArgumentOutOfRangeException>(() => inventory.SetName(string.Empty));
         }
 
         /// <summary>

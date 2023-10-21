@@ -44,17 +44,17 @@ namespace Domain.Tests
         }
 
         /// <summary>
-        /// Тестирование метода <see cref="Document.ChangeTitle"/> с корректными данными.
+        /// Тестирование метода <see cref="Document.SetName"/> с корректными данными.
         /// </summary>
         [Test]
-        public void ChangeTitle_ValidData_Success()
+        public void SetName_ValidData_Success()
         {
             // Arrange
             var document = new Document(1, "Паспорт", this.inventory, this.readingRoom);
             var newTitle = "Свидетельство о рождении";
 
             // Act
-            document.ChangeTitle(newTitle);
+            document.SetName(newTitle);
             var result = document.ToString();
 
             // Assert
@@ -62,16 +62,16 @@ namespace Domain.Tests
         }
 
         /// <summary>
-        /// Тестирование метода <see cref="Document.ChangeTitle"/> с пустым названием.
+        /// Тестирование метода <see cref="Document.SetName"/> с пустым названием.
         /// </summary>
         [Test]
-        public void ChangeTitle_EmptyTitle_Fail()
+        public void SetName_EmptyTitle_Fail()
         {
             // Arrange
             var document = new Document(1, "Паспорт", this.inventory, this.readingRoom);
 
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => document.ChangeTitle(string.Empty));
+            Assert.Throws<ArgumentOutOfRangeException>(() => document.SetName(string.Empty));
         }
 
         /// <summary>

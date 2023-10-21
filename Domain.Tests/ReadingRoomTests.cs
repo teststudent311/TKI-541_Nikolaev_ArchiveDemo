@@ -94,5 +94,41 @@ namespace Domain.Tests
             // Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ReadingRoom(1, null));
         }
+
+        /// <summary>
+        /// Тест метода SetName с валидными данными.
+        /// </summary>
+        [Test]
+        public void SetName_ValidData_Success()
+        {
+            // Arrange
+            var newName = "Малый зал";
+
+            // Act
+            this.readingRoom.SetName(newName);
+
+            // Assert
+            Assert.That(this.readingRoom.Name, Is.EqualTo(newName));
+        }
+
+        /// <summary>
+        /// Тест метода SetName с неверными данными.
+        /// </summary>
+        [Test]
+        public void SetName_WrongData_EmptyName_Fail()
+        {
+            // Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => this.readingRoom.SetName(string.Empty));
+        }
+
+        /// <summary>
+        /// Тест метода SetName с неверными данными.
+        /// </summary>
+        [Test]
+        public void SetName_WrongData_NullName_Fail()
+        {
+            // Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => this.readingRoom.SetName(null));
+        }
     }
 }

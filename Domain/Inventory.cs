@@ -44,12 +44,12 @@ namespace Domain
         public virtual string Title { get; protected set; }
 
         /// <summary>
-        /// Изменяет название описи.
+        /// Устанавливает новое название описи.
         /// </summary>
-        /// <param name="newTitle">Новое название описи.</param>
-        public virtual void ChangeTitle(string newTitle)
+        /// <param name="newName">Новое название описи.</param>
+        public virtual void SetName(string newName)
         {
-            this.Title = newTitle.TrimOrNull() ?? throw new ArgumentOutOfRangeException(nameof(newTitle));
+            this.Title = newName.TrimOrNull() ?? throw new ArgumentOutOfRangeException(nameof(newName));
         }
 
         /// <summary>

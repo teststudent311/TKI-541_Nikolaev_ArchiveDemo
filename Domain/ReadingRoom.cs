@@ -17,10 +17,12 @@ namespace Domain
         /// </summary>
         /// <param name="code">Код читального зала.</param>
         /// <param name="name">Название читального зала.</param>
+#pragma warning disable CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
         public ReadingRoom(int code, string name)
+#pragma warning restore CS8618 // Поле, не допускающее значения NULL, должно содержать значение, отличное от NULL, при выходе из конструктора. Возможно, стоит объявить поле как допускающее значения NULL.
         {
             this.ReadingRoomCode = code;
-            this.Name = name.TrimOrNull() ?? throw new ArgumentOutOfRangeException(nameof(name));
+            this.SetName(name);
         }
 
         /// <summary>
@@ -42,6 +44,15 @@ namespace Domain
         /// Название читального зала.
         /// </summary>
         public virtual string Name { get; protected set; }
+
+        /// <summary>
+        /// Устанавливает новое значение для свойства Name.
+        /// </summary>
+        /// <param name="name">Новое значение для свойства Name.</param>
+        public void SetName(string name)
+        {
+            this.Name = name.TrimOrNull() ?? throw new ArgumentOutOfRangeException(nameof(name));
+        }
 
         /// <summary>
         /// Сравнивает текущий объект с другим объектом того же типа.
