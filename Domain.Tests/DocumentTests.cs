@@ -33,14 +33,14 @@ namespace Domain.Tests
         [Test]
         public void ToString_ValidData_Success()
         {
-            // arrange
+            // Arrange
             var document = new Document(1, "Паспорт", this.inventory, this.readingRoom);
 
-            // act
+            // Act
             var result = document.ToString();
 
-            // assert
-            Assert.That(result, Is.EqualTo("Паспорт"));
+            // Assert
+            Assert.That(result, Is.EqualTo("Код документа: 1, Название: Паспорт, Код описи: 1, Код читального зала: 1"));
         }
 
         /// <summary>
@@ -49,16 +49,16 @@ namespace Domain.Tests
         [Test]
         public void ChangeTitle_ValidData_Success()
         {
-            // arrange
+            // Arrange
             var document = new Document(1, "Паспорт", this.inventory, this.readingRoom);
             var newTitle = "Свидетельство о рождении";
 
-            // act
+            // Act
             document.ChangeTitle(newTitle);
             var result = document.ToString();
 
-            // assert
-            Assert.That(result, Is.EqualTo(newTitle));
+            // Assert
+            Assert.That(result, Is.EqualTo("Код документа: 1, Название: Свидетельство о рождении, Код описи: 1, Код читального зала: 1"));
         }
 
         /// <summary>
@@ -67,11 +67,45 @@ namespace Domain.Tests
         [Test]
         public void ChangeTitle_EmptyTitle_Fail()
         {
-            // arrange
+            // Arrange
             var document = new Document(1, "Паспорт", this.inventory, this.readingRoom);
 
-            // act & assert
+            // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => document.ChangeTitle(string.Empty));
+        }
+
+        /// <summary>
+        /// Тест создания двух объектов Document с одинаковыми значениями.
+        /// </summary>
+        [Test]
+        public void Equals_WithSameValues_ReturnsTrue()
+        {
+            // Arrange
+            var document1 = new Document(1, "Паспорт", this.inventory, this.readingRoom);
+            var document2 = new Document(1, "Паспорт", this.inventory, this.readingRoom);
+
+            // Act
+            bool areEqual = document1.Equals(document2);
+
+            // Assert
+            Assert.That(areEqual, Is.True);
+        }
+
+        /// <summary>
+        /// Тест создания двух объектов Document с разными значениями Title.
+        /// </summary>
+        [Test]
+        public void Equals_WithDifferentTitle_ReturnsFalse()
+        {
+            // Arrange
+            var document1 = new Document(1, "Паспорт", this.inventory, this.readingRoom);
+            var document2 = new Document(1, "Свидетельство о рождении", this.inventory, this.readingRoom);
+
+            // Act
+            bool areEqual = document1.Equals(document2);
+
+            // Assert
+            Assert.That(areEqual, Is.False);
         }
 
         /// <summary>
@@ -80,7 +114,7 @@ namespace Domain.Tests
         [Test]
         public void Ctor_EmptyTitle_Fail()
         {
-            // act & assert
+            // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => _ = new Document(1, string.Empty, this.inventory, this.readingRoom));
         }
     }

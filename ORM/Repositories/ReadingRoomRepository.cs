@@ -8,23 +8,22 @@ namespace ORM.Repositories
     using System.Linq;
     using System.Linq.Expressions;
     using Domain;
-    using NHibernate;
 
     /// <summary>
     /// Репозиторий для управления сущностями <see cref="ReadingRoom"/>.
     /// </summary>
     public class ReadingRoomRepository : IRepository<ReadingRoom>
     {
-        private readonly ISession session;
+        private readonly AppDbContext context;
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="ReadingRoomRepository"/>.
         /// </summary>
-        /// <param name="session">Сессия NHibernate.</param>
-        /// <exception cref="ArgumentNullException">Выбрасывается, когда сессия равна null.</exception>
-        public ReadingRoomRepository(ISession session)
+        /// <param name="context">Контекст базы данных.</param>
+        /// <exception cref="ArgumentNullException">Выбрасывается, когда контекст равен null.</exception>
+        public ReadingRoomRepository(AppDbContext context)
         {
-            this.session = session ?? throw new ArgumentNullException(nameof(session));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -39,8 +38,8 @@ namespace ORM.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            this.session.Delete(entity);
-            this.session.Flush();
+            this.context.ReadingRooms.Remove(entity);
+            this.context.SaveChanges();
         }
 
         /// <summary>
@@ -72,7 +71,9 @@ namespace ORM.Repositories
         /// <returns>Читальный зал с указанным ID.</returns>
         public ReadingRoom Get(int id)
         {
-            return this.session.Get<ReadingRoom>(id);
+#pragma warning disable CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
+            return this.context.ReadingRooms.Find(id);
+#pragma warning restore CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace ORM.Repositories
         /// <returns>Все читальные залы.</returns>
         public IQueryable<ReadingRoom> GetAll()
         {
-            return this.session.Query<ReadingRoom>();
+            return this.context.ReadingRooms;
         }
 
         /// <summary>
@@ -96,8 +97,8 @@ namespace ORM.Repositories
                 return false;
             }
 
-            this.session.Save(entity);
-            this.session.Flush();
+            this.context.ReadingRooms.Add(entity);
+            this.context.SaveChanges();
             return true;
         }
     }

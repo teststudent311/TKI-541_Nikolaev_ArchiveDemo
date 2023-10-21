@@ -5,30 +5,45 @@
 namespace ORM.Mappings
 {
     using Domain;
-    using FluentNHibernate.Mapping;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     /// <summary>
     /// Класс, описывающий правила отображения <see cref="Document"/> на таблицу и наоборот.
     /// </summary>
-    internal class DocumentMap : ClassMap<Document>
+    public class DocumentMap : IEntityTypeConfiguration<Document>
     {
         /// <summary>
-        /// Инициализирует новый экземпляр класса <see cref="DocumentMap"/>.
+        /// Конфигурирует схему таблицы для <see cref="Document"/>.
         /// </summary>
-        public DocumentMap()
+        /// <param name="builder">Построитель сущности.</param>
+        public void Configure(EntityTypeBuilder<Document> builder)
         {
-            // this.Schema("dbo");
-            this.Table("documents");
+            // Указание имени таблицы
+            builder.ToTable("documents");
 
-            this.Id(x => x.DocumentCode).Column("document_code");
+            // Указание первичного ключа
+            builder.HasKey(d => d.DocumentCode)
+                .HasName("document_code");
 
-            this.Map(x => x.Title).Column("title").Not.Nullable().Length(255);
+            builder.Property(d => d.Title)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("title");
 
-            // Ссылка на опись
-            this.References(x => x.Inventory).Column("inventory_code").Not.Nullable().ForeignKey("fk_documents_inventories");
+            builder.HasOne(d => d.Inventory)
+                .WithMany()
+                .HasForeignKey(d => d.InventoryCode)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_documents_inventories");
 
-            // Ссылка на читальный зал
-            this.References(x => x.ReadingRoom).Column("reading_room_code").Not.Nullable().ForeignKey("fk_documents_reading_rooms");
+            builder.HasOne(d => d.ReadingRoom)
+                .WithMany()
+                .HasForeignKey(d => d.ReadingRoomCode)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_documents_reading_rooms");
         }
     }
 }

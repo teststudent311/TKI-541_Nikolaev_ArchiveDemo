@@ -5,24 +5,30 @@
 namespace ORM.Mappings
 {
     using Domain;
-    using FluentNHibernate.Mapping;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     /// <summary>
     /// Класс, описывающий правила отображения <see cref="ReadingRoom"/> на таблицу и наоборот.
     /// </summary>
-    internal class ReadingRoomMap : ClassMap<ReadingRoom>
+    public class ReadingRoomMap : IEntityTypeConfiguration<ReadingRoom>
     {
         /// <summary>
-        /// Инициализирует новый экземпляр класса <see cref="ReadingRoomMap"/>.
+        /// Конфигурирует схему, необходимую для отображения сущности <see cref="ReadingRoom"/>.
         /// </summary>
-        public ReadingRoomMap()
+        /// <param name="builder">Построитель сущности.</param>
+        public void Configure(EntityTypeBuilder<ReadingRoom> builder)
         {
-            // this.Schema("dbo");
-            this.Table("ReadingRooms");
+            // Указание имени таблицы
+            builder.ToTable("reading_rooms");
 
-            this.Id(x => x.ReadingRoomCode);
+            // Указание первичного ключа
+            builder.HasKey(r => r.ReadingRoomCode)
+                .HasName("reading_room_code");
 
-            this.Map(x => x.Name).Not.Nullable();
+            builder.Property(r => r.Name)
+                .IsRequired()
+                .HasColumnName("name");
         }
     }
 }

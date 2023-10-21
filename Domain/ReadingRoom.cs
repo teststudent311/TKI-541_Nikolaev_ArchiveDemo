@@ -5,7 +5,6 @@
 namespace Domain
 {
     using System;
-    using System.Collections.Generic;
     using Staff.Extensions;
 
     /// <summary>
@@ -44,7 +43,38 @@ namespace Domain
         /// </summary>
         public virtual string Name { get; protected set; }
 
-        /// <inheritdoc/>
-        public override string ToString() => $"{this.Name}";
+        /// <summary>
+        /// Сравнивает текущий объект с другим объектом того же типа.
+        /// </summary>
+        /// <param name="obj">Объект для сравнения.</param>
+        /// <returns>Возвращает true, если объекты равны, иначе false.</returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj is ReadingRoom other)
+            {
+                return this.ReadingRoomCode == other.ReadingRoomCode &&
+                       this.Name == other.Name;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Возвращает хеш-код для текущего объекта.
+        /// </summary>
+        /// <returns>Хеш-код текущего объекта.</returns>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(this.ReadingRoomCode, this.Name);
+        }
+
+        /// <summary>
+        /// Возвращает строковое представление текущего объекта.
+        /// </summary>
+        /// <returns>Строковое представление текущего объекта.</returns>
+        public override string ToString()
+        {
+            return $"Код читального зала: {this.ReadingRoomCode}, Название: {this.Name}";
+        }
     }
 }

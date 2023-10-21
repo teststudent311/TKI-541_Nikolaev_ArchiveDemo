@@ -15,16 +15,18 @@ namespace Domain
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="Document"/>.
         /// </summary>
-        /// <param name="documentCode"> Код документа. </param>
-        /// <param name="title"> Название. </param>
-        /// <param name="inventory"> Опись. </param>
-        /// <param name="readingRoom"> Читальный зал. </param>
+        /// <param name="documentCode">Код документа.</param>
+        /// <param name="title">Название.</param>
+        /// <param name="inventory">Опись.</param>
+        /// <param name="readingRoom">Читальный зал.</param>
         public Document(int documentCode, string title, Inventory inventory, ReadingRoom readingRoom)
         {
             this.DocumentCode = documentCode;
             this.Title = title.TrimOrNull() ?? throw new ArgumentOutOfRangeException(nameof(title));
             this.Inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
             this.ReadingRoom = readingRoom ?? throw new ArgumentNullException(nameof(readingRoom));
+            this.InventoryCode = inventory.InventoryCode;
+            this.ReadingRoomCode = readingRoom.ReadingRoomCode;
         }
 
         /// <summary>
@@ -58,15 +60,58 @@ namespace Domain
         public virtual ReadingRoom ReadingRoom { get; protected set; }
 
         /// <summary>
+        /// Код описи.
+        /// </summary>
+        public virtual int InventoryCode { get; protected set; }
+
+        /// <summary>
+        /// Код читального зала.
+        /// </summary>
+        public virtual int ReadingRoomCode { get; protected set; }
+
+        /// <summary>
         /// Изменяет название документа.
         /// </summary>
-        /// <param name="newTitle"> Новое название документа. </param>
+        /// <param name="newTitle">Новое название документа.</param>
         public virtual void ChangeTitle(string newTitle)
         {
             this.Title = newTitle.TrimOrNull() ?? throw new ArgumentOutOfRangeException(nameof(newTitle));
         }
 
-        /// <inheritdoc/>
-        public override string ToString() => this.Title;
+        /// <summary>
+        /// Сравнивает текущий объект с другим объектом того же типа.
+        /// </summary>
+        /// <param name="obj">Объект для сравнения.</param>
+        /// <returns>Возвращает true, если объекты равны, иначе false.</returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj is Document other)
+            {
+                return this.DocumentCode == other.DocumentCode &&
+                       this.Title == other.Title &&
+                       this.InventoryCode == other.InventoryCode &&
+                       this.ReadingRoomCode == other.ReadingRoomCode;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Возвращает хеш-код для текущего объекта.
+        /// </summary>
+        /// <returns>Хеш-код текущего объекта.</returns>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(this.DocumentCode, this.Title, this.InventoryCode, this.ReadingRoomCode);
+        }
+
+        /// <summary>
+        /// Возвращает строковое представление текущего объекта.
+        /// </summary>
+        /// <returns>Строковое представление текущего объекта.</returns>
+        public override string ToString()
+        {
+            return $"Код документа: {this.DocumentCode}, Название: {this.Title}, Код описи: {this.InventoryCode}, Код читального зала: {this.ReadingRoomCode}";
+        }
     }
 }

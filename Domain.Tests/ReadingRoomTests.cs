@@ -34,11 +34,11 @@ namespace Domain.Tests
         [Test]
         public void ToString_ValidData_Success()
         {
-            // act
+            // Act
             var result = this.readingRoom.ToString();
 
-            // assert
-            Assert.That(result, Is.EqualTo("Главный зал"));
+            // Assert
+            Assert.That(result, Is.EqualTo("Код читального зала: 1, Название: Главный зал"));
         }
 
         /// <summary>
@@ -47,8 +47,42 @@ namespace Domain.Tests
         [Test]
         public void Ctor_WrongData_EmptyName_Fail()
         {
-            // assert
+            // Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ReadingRoom(1, string.Empty));
+        }
+
+        /// <summary>
+        /// Тест создания двух объектов ReadingRoom с одинаковыми значениями.
+        /// </summary>
+        [Test]
+        public void Equals_WithSameValues_ReturnsTrue()
+        {
+            // Arrange
+            var readingRoom1 = new ReadingRoom(1, "Главный зал");
+            var readingRoom2 = new ReadingRoom(1, "Главный зал");
+
+            // Act
+            bool areEqual = readingRoom1.Equals(readingRoom2);
+
+            // Assert
+            Assert.IsTrue(areEqual);
+        }
+
+        /// <summary>
+        /// Тест создания двух объектов ReadingRoom с разными значениями Name.
+        /// </summary>
+        [Test]
+        public void Equals_WithDifferentName_ReturnsFalse()
+        {
+            // Arrange
+            var readingRoom1 = new ReadingRoom(1, "Главный зал");
+            var readingRoom2 = new ReadingRoom(1, "Малый зал");
+
+            // Act
+            bool areEqual = readingRoom1.Equals(readingRoom2);
+
+            // Assert
+            Assert.IsFalse(areEqual);
         }
 
         /// <summary>
@@ -57,7 +91,7 @@ namespace Domain.Tests
         [Test]
         public void Ctor_WrongData_NullName_Fail()
         {
-            // assert
+            // Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ReadingRoom(1, null));
         }
     }

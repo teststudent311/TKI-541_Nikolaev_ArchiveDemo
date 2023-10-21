@@ -4,73 +4,62 @@
 
 namespace ORM.Tests
 {
-    using System.Collections;
+    using System.Linq;
     using Domain;
-    using FluentNHibernate.Testing;
+    using Microsoft.EntityFrameworkCore;
     using NUnit.Framework;
-    using ORM.Mappings;
 
     /// <summary>
-    /// Класс для тестирования маппинга <see cref="ReadingRoomMap"/>.
+    /// Класс для тестирования маппинга <see cref="ReadingRoom"/>.
     /// </summary>
     [TestFixture]
-    public class ReadingRoomMapTests : BaseMapTests
+    public class ReadingRoomMapTests
     {
+        private AppDbContext context;
+
+        /// <summary>
+        /// Настройка тестового окружения.
+        /// </summary>
+        [SetUp]
+        public void SetUp()
+        {
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            this.context = new AppDbContext(options);
+        }
+
+        /// <summary>
+        /// Очистка тестового окружения.
+        /// </summary>
+        [TearDown]
+        public void TearDown()
+        {
+            this.context.Dispose();
+        }
+
         /// <summary>
         /// Тест проверяет корректность маппинга для простого случая.
         /// </summary>
         [Test]
         public void PersistenceSpecification_ValidData_Success()
         {
-            // arrange
+            // Arrange
             var readingRoom = new ReadingRoom(1, "Читальный зал 1");
 
-            // act & assert
-            new PersistenceSpecification<ReadingRoom>(this.Session, new CustomEqualityComparer())
-                .CheckProperty(c => c.ReadingRoomCode, 1)
-                .CheckProperty(c => c.Name, "Читальный зал 1")
-                .VerifyTheMappings();
-        }
+            // Act
+            this.context.ReadingRooms.Add(readingRoom);
+            this.context.SaveChanges();
 
-        /// <summary>
-        /// Класс для кастомного сравнения объектов в тестах.
-        /// </summary>
-        public class CustomEqualityComparer : IEqualityComparer
-        {
-            /// <summary>
-            /// Метод для сравнения двух объектов на эквивалентность.
-            /// </summary>
-            /// <param name="x">Первый объект для сравнения.</param>
-            /// <param name="y">Второй объект для сравнения.</param>
-            /// <returns>Возвращает true, если объекты эквивалентны, иначе false.</returns>
-#pragma warning disable CS8767 // Допустимость значений NULL для ссылочных типов в типе параметра не соответствует неявно реализованному элементу (возможно, из-за атрибутов допустимости значений NULL).
-            public new bool Equals(object x, object y)
-#pragma warning restore CS8767 // Допустимость значений NULL для ссылочных типов в типе параметра не соответствует неявно реализованному элементу (возможно, из-за атрибутов допустимости значений NULL).
+            // Assert
+            var savedReadingRoom = this.context.ReadingRooms.FirstOrDefault(r => r.Name == "Читальный зал 1");
+            Assert.That(savedReadingRoom, Is.Not.Null);
+            Assert.Multiple(() =>
             {
-                if (ReferenceEquals(x, y))
-                {
-                    return true;
-                }
-
-                if (x == null || y == null)
-                {
-                    return false;
-                }
-
-#pragma warning disable SA1305 // Field names should not use Hungarian notation
-                return x is ReadingRoom xReadingRoom && y is ReadingRoom yReadingRoom ? xReadingRoom.Name == yReadingRoom.Name : x.Equals(y);
-#pragma warning restore SA1305 // Field names should not use Hungarian notation
-            }
-
-            /// <summary>
-            /// Метод для получения хэш-кода объекта.
-            /// </summary>
-            /// <param name="obj">Объект, для которого необходимо получить хэш-код.</param>
-            /// <returns>Хэш-код объекта.</returns>
-            public int GetHashCode(object obj)
-            {
-                return obj.GetHashCode();
-            }
+                Assert.That(savedReadingRoom.ReadingRoomCode, Is.EqualTo(1));
+                Assert.That(savedReadingRoom.Name, Is.EqualTo("Читальный зал 1"));
+            });
         }
     }
 }

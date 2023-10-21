@@ -8,23 +8,22 @@ namespace ORM.Repositories
     using System.Linq;
     using System.Linq.Expressions;
     using Domain;
-    using NHibernate;
 
     /// <summary>
     /// Репозиторий для управления сущностями <see cref="Document"/>.
     /// </summary>
     public class DocumentRepository : IRepository<Document>
     {
-        private readonly ISession session;
+        private readonly AppDbContext context;
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="DocumentRepository"/>.
         /// </summary>
-        /// <param name="session">Сессия NHibernate.</param>
-        /// <exception cref="ArgumentNullException">Выбрасывается, когда сессия равна null.</exception>
-        public DocumentRepository(ISession session)
+        /// <param name="context">Контекст базы данных.</param>
+        /// <exception cref="ArgumentNullException">Выбрасывается, когда контекст равен null.</exception>
+        public DocumentRepository(AppDbContext context)
         {
-            this.session = session ?? throw new ArgumentNullException(nameof(session));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -39,8 +38,8 @@ namespace ORM.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            this.session.Delete(entity);
-            this.session.Flush();
+            this.context.Documents.Remove(entity);
+            this.context.SaveChanges();
         }
 
         /// <summary>
@@ -58,12 +57,12 @@ namespace ORM.Repositories
         /// </summary>
         /// <param name="predicate">Предикат для поиска.</param>
         /// <returns>Найденный документ.</returns>
+        public Document Find(Expression<Func<Document, bool>> predicate)
+        {
 #pragma warning disable CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
-        public Document Find(Expression<Func<Document, bool>> predicate) =>
-#pragma warning disable SA1101 // Prefix local calls with this
-            GetAll().FirstOrDefault(predicate);
+            return this.GetAll().FirstOrDefault(predicate);
 #pragma warning restore CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
-#pragma warning restore SA1101 // Prefix local calls with this
+        }
 
         /// <summary>
         /// Получает документ по ID.
@@ -72,7 +71,9 @@ namespace ORM.Repositories
         /// <returns>Документ с указанным ID.</returns>
         public Document Get(int id)
         {
-            return this.session.Get<Document>(id);
+#pragma warning disable CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
+            return this.context.Documents.Find(id);
+#pragma warning restore CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace ORM.Repositories
         /// <returns>Все документы.</returns>
         public IQueryable<Document> GetAll()
         {
-            return this.session.Query<Document>();
+            return this.context.Documents;
         }
 
         /// <summary>
@@ -96,8 +97,8 @@ namespace ORM.Repositories
                 return false;
             }
 
-            this.session.Save(entity);
-            this.session.Flush();
+            this.context.Documents.Add(entity);
+            this.context.SaveChanges();
             return true;
         }
     }

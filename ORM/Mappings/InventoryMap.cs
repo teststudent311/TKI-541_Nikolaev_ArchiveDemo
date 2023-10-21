@@ -5,24 +5,31 @@
 namespace ORM.Mappings
 {
     using Domain;
-    using FluentNHibernate.Mapping;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     /// <summary>
     /// Класс, описывающий правила отображения объектов <see cref="Inventory"/> на таблицу базы данных и обратно.
     /// </summary>
-    internal class InventoryMap : ClassMap<Inventory>
+    public class InventoryMap : IEntityTypeConfiguration<Inventory>
     {
         /// <summary>
-        /// Инициализирует новый экземпляр класса <see cref="InventoryMap"/>, устанавливая правила отображения.
+        /// Конфигурирует схему таблицы для <see cref="Inventory"/>.
         /// </summary>
-        public InventoryMap()
+        /// <param name="builder">Построитель сущности.</param>
+        public void Configure(EntityTypeBuilder<Inventory> builder)
         {
-            // this.Schema("dbo");
-            this.Table("Inventories");
+            // Указание имени таблицы
+            builder.ToTable("inventories");
 
-            this.Id(x => x.InventoryCode).Column("inventory_code");
+            // Указание первичного ключа
+            builder.HasKey(i => i.InventoryCode)
+                .HasName("inventory_code");
 
-            this.Map(x => x.Title).Column("title").Not.Nullable().Length(255);
+            builder.Property(i => i.Title)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("title");
         }
     }
 }

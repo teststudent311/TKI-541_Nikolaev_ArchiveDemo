@@ -36,14 +36,14 @@ namespace Domain.Tests
         [Test]
         public void ToString_ValidData_Success()
         {
-            // arrange
+            // Arrange
             var inventory = new Inventory(1001, "Опись 1");
 
-            // act
+            // Act
             var result = inventory.ToString();
 
-            // assert
-            Assert.That(result, Is.EqualTo("Опись 1"));
+            // Assert
+            Assert.That(result, Does.Contain("Опись 1"));
         }
 
         /// <summary>
@@ -61,14 +61,14 @@ namespace Domain.Tests
         [Test]
         public void ChangeTitle_ValidData_Success()
         {
-            // arrange
-            var inventory = GetInventory("Опись 1");
+            // Arrange
+            var inventory = new Inventory(1001, "Опись 1");
 
-            // act
+            // Act
             inventory.ChangeTitle("Опись 2");
 
-            // assert
-            Assert.That(inventory.ToString(), Is.EqualTo("Опись 2"));
+            // Assert
+            Assert.That(inventory.ToString(), Does.Contain("Опись 2"));
         }
 
         /// <summary>
@@ -77,11 +77,45 @@ namespace Domain.Tests
         [Test]
         public void ChangeTitle_EmptyTitle_Fail()
         {
-            // arrange
+            // Arrange
             var inventory = GetInventory("Опись 1");
 
-            // act & assert
+            // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => inventory.ChangeTitle(string.Empty));
+        }
+
+        /// <summary>
+        /// Тест создания двух объектов Inventory с одинаковыми значениями.
+        /// </summary>
+        [Test]
+        public void Equals_WithSameValues_ReturnsTrue()
+        {
+            // Arrange
+            var inventory1 = new Inventory(1, "Опись 1");
+            var inventory2 = new Inventory(1, "Опись 1");
+
+            // Act
+            bool areEqual = inventory1.Equals(inventory2);
+
+            // Assert
+            Assert.That(areEqual, Is.True);
+        }
+
+        /// <summary>
+        /// Тест создания двух объектов Inventory с разными значениями Title.
+        /// </summary>
+        [Test]
+        public void Equals_WithDifferentTitle_ReturnsFalse()
+        {
+            // Arrange
+            var inventory1 = new Inventory(1, "Опись 1");
+            var inventory2 = new Inventory(1, "Опись 2");
+
+            // Act
+            bool areEqual = inventory1.Equals(inventory2);
+
+            // Assert
+            Assert.That(areEqual, Is.False);
         }
 
         /// <summary>

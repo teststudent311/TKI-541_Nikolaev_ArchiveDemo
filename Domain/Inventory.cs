@@ -8,7 +8,7 @@ namespace Domain
     using Staff.Extensions;
 
     /// <summary>
-    /// Описывает опись.
+    /// Опись.
     /// </summary>
     public class Inventory
     {
@@ -44,15 +44,46 @@ namespace Domain
         public virtual string Title { get; protected set; }
 
         /// <summary>
-        /// Изменить название описи.
+        /// Изменяет название описи.
         /// </summary>
-        /// <param name="newTitle">Новое название.</param>
+        /// <param name="newTitle">Новое название описи.</param>
         public virtual void ChangeTitle(string newTitle)
         {
             this.Title = newTitle.TrimOrNull() ?? throw new ArgumentOutOfRangeException(nameof(newTitle));
         }
 
-        /// <inheritdoc/>
-        public override string ToString() => $"{this.Title}";
+        /// <summary>
+        /// Сравнивает текущий объект с другим объектом того же типа.
+        /// </summary>
+        /// <param name="obj">Объект для сравнения.</param>
+        /// <returns>Возвращает true, если объекты равны, иначе false.</returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj is Inventory other)
+            {
+                return this.InventoryCode == other.InventoryCode &&
+                       this.Title == other.Title;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Возвращает хеш-код для текущего объекта.
+        /// </summary>
+        /// <returns>Хеш-код текущего объекта.</returns>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(this.InventoryCode, this.Title);
+        }
+
+        /// <summary>
+        /// Возвращает строковое представление текущего объекта.
+        /// </summary>
+        /// <returns>Строковое представление текущего объекта.</returns>
+        public override string ToString()
+        {
+            return $"Код описи: {this.InventoryCode}, Название: {this.Title}";
+        }
     }
 }

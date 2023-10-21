@@ -8,23 +8,22 @@ namespace ORM.Repositories
     using System.Linq;
     using System.Linq.Expressions;
     using Domain;
-    using NHibernate;
 
     /// <summary>
     /// Репозиторий для управления сущностями <see cref="Inventory"/>.
     /// </summary>
     public class InventoryRepository : IRepository<Inventory>
     {
-        private readonly ISession session;
+        private readonly AppDbContext context;
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="InventoryRepository"/>.
         /// </summary>
-        /// <param name="session">Сессия NHibernate.</param>
-        /// <exception cref="ArgumentNullException">Выбрасывается, когда сессия равна null.</exception>
-        public InventoryRepository(ISession session)
+        /// <param name="context">Контекст базы данных.</param>
+        /// <exception cref="ArgumentNullException">Выбрасывается, когда контекст равен null.</exception>
+        public InventoryRepository(AppDbContext context)
         {
-            this.session = session ?? throw new ArgumentNullException(nameof(session));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -39,8 +38,8 @@ namespace ORM.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            this.session.Delete(entity);
-            this.session.Flush();
+            this.context.Inventories.Remove(entity);
+            this.context.SaveChanges();
         }
 
         /// <summary>
@@ -72,7 +71,9 @@ namespace ORM.Repositories
         /// <returns>Инвентарь с указанным ID.</returns>
         public Inventory Get(int id)
         {
-            return this.session.Get<Inventory>(id);
+#pragma warning disable CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
+            return this.context.Inventories.Find(id);
+#pragma warning restore CS8603 // Возможно, возврат ссылки, допускающей значение NULL.
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace ORM.Repositories
         /// <returns>Весь инвентарь.</returns>
         public IQueryable<Inventory> GetAll()
         {
-            return this.session.Query<Inventory>();
+            return this.context.Inventories;
         }
 
         /// <summary>
@@ -96,8 +97,8 @@ namespace ORM.Repositories
                 return false;
             }
 
-            this.session.Save(entity);
-            this.session.Flush();
+            this.context.Inventories.Add(entity);
+            this.context.SaveChanges();
             return true;
         }
     }

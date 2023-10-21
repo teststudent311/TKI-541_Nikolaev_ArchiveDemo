@@ -5,9 +5,10 @@
 namespace ArchiveDemo
 {
     using System;
+    using System.Linq;
     using Domain;
+    using Microsoft.EntityFrameworkCore;
     using ORM;
-    using ORM.Repositories;
 
     /// <summary>
     /// Главный класс программы.
@@ -28,20 +29,23 @@ namespace ArchiveDemo
 
             Console.WriteLine($"{document} --> {inventory}");
 
-            // Используем сессию NHibernate для сохранения объектов в базе данных
-            using var sessionFactory = NHibernateConfigurator.GetSessionFactory(showSql: true);
-            using var session = sessionFactory.OpenSession();
-            var docRepo = new DocumentRepository(session);
+            // Используем DbContext для сохранения объектов в базе данных
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseNpgsql("Host=localhost;Username=postgres;Password=;Database=testbd1;");
+            using var context = new AppDbContext(optionsBuilder.Options);
 
             // Сначала сохраняем объекты, на которые ссылаются внешние ключи
-            session.Save(inventory);
-            session.Save(readingRoom);
+            context.Inventories.Add(inventory);
+            context.ReadingRooms.Add(readingRoom);
 
-            docRepo.Save(document);
-            session.Save(document);
-            session.Flush();
+            context.Documents.Add(document);
+            context.SaveChanges();
 
-            var foundDocument = docRepo.Find(x => x.Title == "Название 1");
+            var foundDocument = context.Documents
+                .Include(d => d.Inventory)
+                .Include(d => d.ReadingRoom)
+                .FirstOrDefault(d => d.Title == "Название 1");
+
             Console.WriteLine(foundDocument);
         }
     }
