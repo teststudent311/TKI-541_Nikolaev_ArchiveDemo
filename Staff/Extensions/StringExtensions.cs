@@ -1,4 +1,4 @@
-﻿// <copyright file="StringExtensions.cs" company="Васильева М.А.">
+﻿// <copyright file="StringExtensions.cs" company="Николаев А.М.">
 // Copyright (c) Николаев А.М.. All rights reserved.
 // </copyright>
 
@@ -28,3 +28,4 @@ namespace Staff.Extensions
                 : trimmed;
         }
     }
+}
